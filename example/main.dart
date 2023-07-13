@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:motion_tab_bar_v2/motion-badge.widget.dart';
+import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,12 +31,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
-  TabController? _tabController;
+  // TabController? _tabController;
+  MotionTabBarController? _motionTabBarController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
+    //// Use normal tab controller
+    // _tabController = TabController(
+    //   initialIndex: 1,
+    //   length: 4,
+    //   vsync: this,
+    // );
+
+    //// use "MotionTabBarController" to replace with "TabController", if you need to programmatically change the tab
+    _motionTabBarController = MotionTabBarController(
       initialIndex: 1,
       length: 4,
       vsync: this,
@@ -45,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    _tabController!.dispose();
+    _motionTabBarController!.dispose();
   }
 
   @override
@@ -55,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         title: Text(widget.title!),
       ),
       bottomNavigationBar: MotionTabBar(
+        controller: _motionTabBarController, // ADD THIS if you need to change your tab programmatically
         initialSelectedTab: "Home",
         useSafeArea: true, // default: true, apply safe area wrapper
         labels: const ["Dashboard", "Home", "Profile", "Settings"],
@@ -109,26 +120,59 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         tabBarColor: const Color(0xFFAFAFAF),
         onTabItemSelected: (int value) {
           setState(() {
-            _tabController!.index = value;
+            _motionTabBarController!.index = value;
           });
         },
       ),
       body: TabBarView(
-        physics: NeverScrollableScrollPhysics(), // swipe navigation handling is not supported
-        controller: _tabController,
-        // ignore: prefer_const_literals_to_create_immutables
+        physics: const NeverScrollableScrollPhysics(), // swipe navigation handling is not supported
+        controller: _motionTabBarController,
         children: <Widget>[
-          const Center(
-            child: Text("Dashboard"),
+          MainPageContentComponent(title: "Dashboard Page", controller: _motionTabBarController!),
+          MainPageContentComponent(title: "Home Page", controller: _motionTabBarController!),
+          MainPageContentComponent(title: "Profile Page", controller: _motionTabBarController!),
+          MainPageContentComponent(title: "Settings Page", controller: _motionTabBarController!),
+        ],
+      ),
+    );
+  }
+}
+
+class MainPageContentComponent extends StatelessWidget {
+  const MainPageContentComponent({
+    required this.title,
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
+
+  final String title;
+  final MotionTabBarController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 50),
+          const Text('Go to "X" page programmatically'),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () => controller.index = 0,
+            child: const Text('Dashboard Page'),
           ),
-          const Center(
-            child: Text("Home"),
+          ElevatedButton(
+            onPressed: () => controller.index = 1,
+            child: const Text('Home Page'),
           ),
-          const Center(
-            child: Text("Profile"),
+          ElevatedButton(
+            onPressed: () => controller.index = 2,
+            child: const Text('Profile Page'),
           ),
-          const Center(
-            child: Text("Settings"),
+          ElevatedButton(
+            onPressed: () => controller.index = 3,
+            child: const Text('Settings Page'),
           ),
         ],
       ),

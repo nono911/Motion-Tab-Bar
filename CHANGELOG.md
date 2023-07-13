@@ -1,3 +1,7 @@
+## [0.3.0] - 13-July-2023
+* add new "MotionTabBarController" to programmatically control tab change
+* updated example
+
 ## [0.2.6] - 8-March-2022
 * change "title" - softwarp: false, maxLines: 1
 
