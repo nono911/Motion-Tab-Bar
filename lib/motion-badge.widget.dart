@@ -35,7 +35,7 @@ class MotionBadgeWidget extends StatelessWidget {
             padding: EdgeInsets.all(3),
             margin: EdgeInsets.all(7),
             decoration: new BoxDecoration(
-              color: _disabled == false ? _color : _color!.withOpacity(0.6),
+              color: _disabled == false ? _color : _color!.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(_size! / 2),
             ),
             constraints: BoxConstraints(
@@ -48,7 +48,7 @@ class MotionBadgeWidget extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(3),
                 decoration: new BoxDecoration(
-                  color: _disabled == false ? _color : _color!.withOpacity(0.6),
+                  color: _disabled == false ? _color : _color!.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(_size! / 2),
                 ),
                 constraints: BoxConstraints(

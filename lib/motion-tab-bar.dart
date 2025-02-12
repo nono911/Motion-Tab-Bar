@@ -15,8 +15,10 @@ class MotionTabBar extends StatefulWidget {
 
   final List<String?> labels;
   final List<IconData>? icons;
+  final List<Widget>? iconWidgets;
   final bool useSafeArea;
   final MotionTabBarController? controller;
+  final bool labelAlwaysVisible;
 
   // badge
   final List<Widget?>? badges;
@@ -35,11 +37,14 @@ class MotionTabBar extends StatefulWidget {
     required this.initialSelectedTab,
     required this.labels,
     this.icons,
+    this.iconWidgets,
     this.useSafeArea = true,
     this.badges,
     this.controller,
+    this.labelAlwaysVisible = false,
   })  : assert(labels.contains(initialSelectedTab)),
-        assert(icons != null && icons.length == labels.length),
+        assert((icons != null && icons.length == labels.length) ||
+            (iconWidgets != null && iconWidgets.length == labels.length)),
         assert((badges != null && badges.length > 0) ? badges.length == labels.length : true);
 
   @override
@@ -56,9 +61,10 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
   late Animation<double> _fadeFabInAnimation;
 
   late List<String?> labels;
-  late Map<String?, IconData> icons;
+  Map<String?, IconData>? icons;
+  Map<String?, Widget>? iconWidgets;
 
-  get tabAmount => icons.keys.length;
+  get tabAmount => iconWidgets != null && iconWidgets!.keys.length > 0 ? iconWidgets!.keys.length : icons?.keys.length;
   get index => labels.indexOf(selectedTab);
   get position {
     double pace = 2 / (labels.length - 1);
@@ -67,6 +73,7 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
 
   double fabIconAlpha = 1;
   IconData? activeIcon;
+  Widget? activeIconWidget;
   String? selectedTab;
 
   List<Widget>? badges;
@@ -76,10 +83,11 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
   void initState() {
     super.initState();
 
-    if(widget.controller != null) {
-      widget.controller!.onTabChange= (index) {
+    if (widget.controller != null) {
+      widget.controller!.onTabChange = (index) {
         setState(() {
-          activeIcon = widget.icons![index];
+          activeIcon = widget.icons?[index];
+          activeIconWidget = widget.iconWidgets?[index];
           selectedTab = widget.labels[index];
         });
         _initAnimationAndStart(_positionAnimation.value, position);
@@ -87,14 +95,25 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
     }
 
     labels = widget.labels;
-    icons = Map.fromIterable(
-      labels,
-      key: (label) => label,
-      value: (label) => widget.icons![labels.indexOf(label)],
-    );
-
     selectedTab = widget.initialSelectedTab;
-    activeIcon = icons[selectedTab];
+
+    if (widget.icons != null && widget.icons!.length > 0) {
+      icons = Map.fromIterable(
+        labels,
+        key: (label) => label,
+        value: (label) => widget.icons![labels.indexOf(label)],
+      );
+      activeIcon = icons![selectedTab];
+    }
+
+    if (widget.iconWidgets != null && widget.iconWidgets!.length > 0) {
+      iconWidgets = Map.fromIterable(
+        labels,
+        key: (label) => label,
+        value: (label) => widget.iconWidgets![labels.indexOf(label)],
+      );
+      activeIconWidget = iconWidgets![selectedTab];
+    }
 
     // init badge text
     int selectedIndex = labels.indexWhere((element) => element == widget.initialSelectedTab);
@@ -127,7 +146,8 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
       ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
           setState(() {
-            activeIcon = icons[selectedTab];
+            if (icons != null && icons!.length > 0) activeIcon = icons![selectedTab];
+            if (iconWidgets != null && iconWidgets!.length > 0) activeIconWidget = iconWidgets![selectedTab];
 
             int selectedIndex = labels.indexWhere((element) => element == selectedTab);
             activeBadge = (widget.badges != null && widget.badges!.length > 0) ? widget.badges![selectedIndex] : null;
@@ -229,11 +249,13 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    Icon(
-                                      activeIcon,
-                                      color: widget.tabIconSelectedColor,
-                                      size: widget.tabIconSelectedSize,
-                                    ),
+                                    activeIconWidget != null
+                                        ? activeIconWidget!
+                                        : Icon(
+                                            activeIcon,
+                                            color: widget.tabIconSelectedColor,
+                                            size: widget.tabIconSelectedSize,
+                                          ),
                                     activeBadge != null
                                         ? Positioned(
                                             top: 0,
@@ -261,22 +283,26 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
 
   List<Widget> generateTabItems() {
     return labels.map((tabLabel) {
-      IconData? icon = icons[tabLabel];
+      // IconData? tabIconData = icons[tabLabel];
+      // Widget? tabIconWidget = iconWidgets?[tabLabel];
 
       int selectedIndex = labels.indexWhere((element) => element == tabLabel);
       Widget? badge = (widget.badges != null && widget.badges!.length > 0) ? widget.badges![selectedIndex] : null;
 
       return MotionTabItem(
         selected: selectedTab == tabLabel,
-        iconData: icon,
-        title: tabLabel,
+        label: tabLabel,
+        labelAlwaysVisible: widget.labelAlwaysVisible,
         textStyle: widget.textStyle ?? TextStyle(color: Colors.black),
+        tabIconWidget: iconWidgets?[tabLabel],
+        tabIconData: icons?[tabLabel],
         tabIconColor: widget.tabIconColor ?? Colors.black,
         tabIconSize: widget.tabIconSize,
         badge: badge,
         callbackFunction: () {
           setState(() {
-            activeIcon = icon;
+            activeIcon = icons?[tabLabel];
+            activeIconWidget = iconWidgets?[tabLabel];
             selectedTab = tabLabel;
             widget.onTabItemSelected!(index);
           });

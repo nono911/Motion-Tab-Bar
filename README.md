@@ -1,11 +1,17 @@
-# Motion Tab Bar v2, with null-safety support
+# Motion Tab Bar v2, with Futter 3 (null-safety support)
 
 [![pub package](https://img.shields.io/pub/v/motion_tab_bar_v2)](https://pub.dev/packages/motion_tab_bar_v2)
 [![likes](https://img.shields.io/pub/likes/motion_tab_bar_v2)](https://pub.dev/packages/motion_tab_bar_v2/score)
 [![popularity](https://img.shields.io/pub/popularity/motion_tab_bar_v2)](https://pub.dev/packages/motion_tab_bar_v2/score)
 [![pub points](https://img.shields.io/pub/points/motion_tab_bar_v2)](https://pub.dev/packages/motion_tab_bar_v2/score)
 
-A beautiful animated widget for your Flutter Tab Bar.
+
+A highly customizable, animated tab bar widget for your flutter app.
+- support tab bar style customization
+- support custom icons
+- support custom badges / indicators
+- support programatically navigate to different tab
+
 
 
 **Preview:**

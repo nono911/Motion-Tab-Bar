@@ -9,24 +9,28 @@ const double ALPHA_ON = 1;
 const int ANIM_DURATION = 300;
 
 class MotionTabItem extends StatefulWidget {
-  final String? title;
+  final String? label;
+  final bool labelAlwaysVisible;
   final bool selected;
-  final IconData? iconData;
   final TextStyle textStyle;
   final Function callbackFunction;
-  final Color tabIconColor;
-  final double? tabIconSize;
   final Widget? badge;
+  final Widget? tabIconWidget;
+  final IconData? tabIconData;
+  final Color? tabIconColor;
+  final double? tabIconSize;
 
   MotionTabItem({
-    required this.title,
+    required this.label,
     required this.selected,
-    required this.iconData,
     required this.textStyle,
-    required this.tabIconColor,
     required this.callbackFunction,
-    this.tabIconSize = 24,
+    this.labelAlwaysVisible = false,
     this.badge,
+    this.tabIconWidget,
+    this.tabIconData,
+    this.tabIconColor,
+    this.tabIconSize = 24,
   });
 
   @override
@@ -52,9 +56,13 @@ class _MotionTabItemState extends State<MotionTabItem> {
 
   _setIconTextAlpha() {
     setState(() {
+      iconAlpha = (widget.selected) ? ALPHA_OFF : ALPHA_ON;
       iconYAlign = (widget.selected) ? ICON_OFF : ICON_ON;
       textYAlign = (widget.selected) ? TEXT_ON : TEXT_OFF;
-      iconAlpha = (widget.selected) ? ALPHA_OFF : ALPHA_ON;
+      if (widget.labelAlwaysVisible) {
+        iconYAlign = iconYAlign - 1;
+        textYAlign = TEXT_ON + 0.3;
+      }
     });
   }
 
@@ -73,9 +81,9 @@ class _MotionTabItemState extends State<MotionTabItem> {
               alignment: Alignment(0, textYAlign),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: widget.selected
+                child: (widget.labelAlwaysVisible || widget.selected)
                     ? Text(
-                        widget.title!,
+                        widget.label!,
                         style: widget.textStyle,
                         softWrap: false,
                         maxLines: 1,
@@ -100,18 +108,7 @@ class _MotionTabItemState extends State<MotionTabItem> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      IconButton(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        padding: EdgeInsets.all(0),
-                        alignment: Alignment(0, 0),
-                        icon: Icon(
-                          widget.iconData,
-                          color: widget.tabIconColor,
-                          size: widget.tabIconSize,
-                        ),
-                        onPressed: () => widget.callbackFunction(),
-                      ),
+                      widget.tabIconWidget != null ? widget.tabIconWidget! : _generateDefaultIconButtonWidget(),
                       widget.badge != null
                           ? Positioned(
                               top: 0,
@@ -127,6 +124,21 @@ class _MotionTabItemState extends State<MotionTabItem> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _generateDefaultIconButtonWidget() {
+    return IconButton(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      padding: EdgeInsets.all(0),
+      alignment: Alignment(0, 0),
+      icon: Icon(
+        widget.tabIconData,
+        color: widget.tabIconColor,
+        size: widget.tabIconSize,
+      ),
+      onPressed: () => widget.callbackFunction(),
     );
   }
 }

@@ -1,3 +1,8 @@
+## [0.4.0] - 12-Feb-2025
+* [NEW] add `iconWidgets` parameter to support custom icon widget
+* [NEW] add `labelAlwaysVisible` parameter to allow label always showing
+* updated example with new custom icon widget
+
 ## [0.3.0] - 13-July-2023
 * add new "MotionTabBarController" to programmatically control tab change
 * updated example
