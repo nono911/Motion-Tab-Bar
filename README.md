@@ -37,7 +37,7 @@ Add the plugin:
 
 ```yaml
 dependencies:
-  motion_tab_bar_v2: ^0.3.0
+  motion_tab_bar_v2: ^0.4.0
 ```
 
 ## Basic Usage
@@ -95,8 +95,25 @@ import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
   bottomNavigationBar: MotionTabBar(
     controller: _motionTabBarController, // ADD THIS if you need to change your tab programmatically
     initialSelectedTab: "Home",
+    useSafeArea: true, // default: true, apply safe area wrapper
+    labelAlwaysVisible: true, // default: false, set to "true" if you need to always show labels
     labels: const ["Dashboard", "Home", "Profile", "Settings"],
-    icons: const [Icons.dashboard, Icons.home, Icons.people_alt, Icons.settings],
+
+    //// use default icon (with IconData)
+    // icons: const [
+    //   Icons.dashboard,
+    //   Icons.home,
+    //   Icons.people_alt,
+    //   Icons.settings,
+    // ],
+
+    // use custom widget as display Icon
+    iconWidgets: [
+      _generateCustomIcon('<svgString>'),
+      _generateCustomIcon('<svgString>'),
+      _generateCustomIcon('<svgString>'),
+      _generateCustomIcon('<svgString>'),
+    ],
 
     // optional badges, length must be same with labels
     badges: [
@@ -104,7 +121,7 @@ import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
       const MotionBadgeWidget(
         text: '99+',
         textColor: Colors.white, // optional, default to Colors.white
-        color: Colors.red, // optional, default to Colors.red
+        color: Colors.blue, // optional, default to Colors.red
         size: 18, // optional, default to 18
       ),
 
@@ -127,7 +144,7 @@ import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
       // Default Motion Badge Widget with indicator only
       const MotionBadgeWidget(
         isIndicator: true,
-        color: Colors.red, // optional, default to Colors.red
+        color: Colors.blue, // optional, default to Colors.red
         size: 5, // optional, default to 5,
         show: true, // true / false
       ),
@@ -139,15 +156,14 @@ import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
       color: Colors.black,
       fontWeight: FontWeight.w500,
     ),
-    tabIconColor: Colors.blue[600],
+    // tabIconColor: Colors.blue[600],
     tabIconSize: 28.0,
-    tabIconSelectedSize: 26.0,
-    tabSelectedColor: Colors.blue[900],
-    tabIconSelectedColor: Colors.white,
-    tabBarColor: const Color(0xFFAFAFAF),
+    tabIconSelectedSize: 32.0,
+    tabSelectedColor: Colors.white,
+    tabIconSelectedColor: Colors.black,
+    tabBarColor: Colors.orange,
     onTabItemSelected: (int value) {
       setState(() {
-        // _tabController!.index = value;
         _motionTabBarController!.index = value;
       });
     },
