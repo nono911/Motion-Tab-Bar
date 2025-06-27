@@ -108,7 +108,9 @@ class _MotionTabItemState extends State<MotionTabItem> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      widget.tabIconWidget != null ? widget.tabIconWidget! : _generateDefaultIconButtonWidget(),
+                      widget.tabIconWidget != null
+                          ? widget.tabIconWidget!
+                          : _generateDefaultIconButtonWidget(),
                       widget.badge != null
                           ? Positioned(
                               top: 0,

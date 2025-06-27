@@ -1,13 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
+
 import 'package:motion_tab_bar_v2/motion-badge.widget.dart';
+import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -23,7 +25,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, this.title});
+  const MyHomePage({
+    Key? key,
+    this.title,
+  }) : super(key: key);
 
   final String? title;
 
@@ -67,10 +72,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         backgroundColor: Colors.orange,
       ),
       bottomNavigationBar: MotionTabBar(
-        controller: _motionTabBarController, // ADD THIS if you need to change your tab programmatically
+        controller:
+            _motionTabBarController, // ADD THIS if you need to change your tab programmatically
         initialSelectedTab: "Home",
         useSafeArea: true, // default: true, apply safe area wrapper
-        labelAlwaysVisible: true, // default: false, set to "true" if you need to always show labels
+        labelAlwaysVisible:
+            true, // default: false, set to "true" if you need to always show labels
         labels: const ["Dashboard", "Home", "Profile", "Settings"],
 
         //// use default icon (with IconData)
@@ -135,8 +142,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           fontWeight: FontWeight.w500,
         ),
         // tabIconColor: Colors.blue[600],
-        tabIconSize: 28.0,
-        tabIconSelectedSize: 32.0,
+        tabIconSize: 20.0,
+        tabIconSelectedSize: 24.0,
         tabSelectedColor: Colors.white,
         tabIconSelectedColor: Colors.black,
         tabBarColor: Colors.orange,
@@ -147,13 +154,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         },
       ),
       body: TabBarView(
-        physics: const NeverScrollableScrollPhysics(), // swipe navigation handling is not supported
+        physics:
+            const NeverScrollableScrollPhysics(), // swipe navigation handling is not supported
         controller: _motionTabBarController,
         children: <Widget>[
-          MainPageContentComponent(title: "Dashboard Page", controller: _motionTabBarController!),
-          MainPageContentComponent(title: "Home Page", controller: _motionTabBarController!),
-          MainPageContentComponent(title: "Profile Page", controller: _motionTabBarController!),
-          MainPageContentComponent(title: "Settings Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Dashboard Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Home Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Profile Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Settings Page", controller: _motionTabBarController!),
         ],
       ),
     );
@@ -184,10 +196,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
 class MainPageContentComponent extends StatelessWidget {
   const MainPageContentComponent({
+    Key? key,
     required this.title,
     required this.controller,
-    super.key,
-  });
+  }) : super(key: key);
 
   final String title;
   final MotionTabBarController controller;
@@ -197,9 +209,10 @@ class MainPageContentComponent extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 10,
         children: [
-          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           const Text('Go to "X" page programmatically'),
           ElevatedButton(
