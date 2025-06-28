@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const double ICON_OFF = -3;
+const double ICON_OFF = -1;
 const double ICON_ON = 0;
 const double TEXT_OFF = 3;
 const double TEXT_ON = 1;
@@ -13,6 +13,7 @@ class MotionTabItem extends StatefulWidget {
   final bool labelAlwaysVisible;
   final bool selected;
   final TextStyle textStyle;
+  final TextStyle? textSelectedStyle;
   final Function callbackFunction;
   final Widget? badge;
   final Widget? tabIconWidget;
@@ -24,6 +25,7 @@ class MotionTabItem extends StatefulWidget {
     required this.label,
     required this.selected,
     required this.textStyle,
+    this.textSelectedStyle,
     required this.callbackFunction,
     this.labelAlwaysVisible = false,
     this.badge,
@@ -84,7 +86,9 @@ class _MotionTabItemState extends State<MotionTabItem> {
                 child: (widget.labelAlwaysVisible || widget.selected)
                     ? Text(
                         widget.label!,
-                        style: widget.textStyle,
+                        style: widget.selected
+                            ? (widget.textSelectedStyle ?? widget.textStyle)
+                            : widget.textStyle,
                         softWrap: false,
                         maxLines: 1,
                         textAlign: TextAlign.center,
@@ -94,6 +98,9 @@ class _MotionTabItemState extends State<MotionTabItem> {
             ),
           ),
           InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             onTap: () => widget.callbackFunction(),
             child: Container(
               height: double.infinity,
@@ -133,12 +140,17 @@ class _MotionTabItemState extends State<MotionTabItem> {
     return IconButton(
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
-      padding: EdgeInsets.all(0),
+      hoverColor: Colors.transparent,
+      splashRadius: 0.0,
+      padding: EdgeInsets.only(left: 0, right: 0, top: 8, bottom: 0),
       alignment: Alignment(0, 0),
-      icon: Icon(
-        widget.tabIconData,
-        color: widget.tabIconColor,
-        size: widget.tabIconSize,
+      icon: Padding(
+        padding: EdgeInsets.only(top: 8.0),
+        child: Icon(
+          widget.tabIconData,
+          color: widget.tabIconColor,
+          size: widget.tabIconSize,
+        ),
       ),
       onPressed: () => widget.callbackFunction(),
     );

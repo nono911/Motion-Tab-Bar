@@ -13,6 +13,7 @@ class MotionTabBar extends StatefulWidget {
       tabBarColor;
   final double? tabIconSize, tabIconSelectedSize, tabBarHeight, tabSize;
   final TextStyle? textStyle;
+  final TextStyle? textSelectedStyle;
   final Function? onTabItemSelected;
   final String initialSelectedTab;
 
@@ -28,6 +29,7 @@ class MotionTabBar extends StatefulWidget {
 
   MotionTabBar({
     this.textStyle,
+    this.textSelectedStyle,
     this.tabIconColor = Colors.black,
     this.tabIconSize = 24,
     this.tabIconSelectedColor = Colors.white,
@@ -188,11 +190,14 @@ class _MotionTabBarState extends State<MotionTabBar>
     return Container(
       decoration: BoxDecoration(
         color: widget.tabBarColor,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
-            offset: Offset(0, -1),
-            blurRadius: 5,
+            color: Color(0x29838BB4),
+            offset: Offset(0, 8),
+            blurRadius: 32,
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -205,6 +210,9 @@ class _MotionTabBarState extends State<MotionTabBar>
               height: widget.tabBarHeight,
               decoration: BoxDecoration(
                 color: widget.tabBarColor,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
@@ -244,7 +252,7 @@ class _MotionTabBarState extends State<MotionTabBar>
                         ),
                         SizedBox(
                           height: widget.tabSize! + 15,
-                          width: widget.tabSize! + 35,
+                          width: widget.tabSize! + 30,
                           child: CustomPaint(
                               painter: HalfPainter(color: widget.tabBarColor)),
                         ),
@@ -264,7 +272,14 @@ class _MotionTabBarState extends State<MotionTabBar>
                                   alignment: Alignment.center,
                                   children: [
                                     activeIconWidget != null
-                                        ? activeIconWidget!
+                                        ? ColorFiltered(
+                                            colorFilter: ColorFilter.mode(
+                                              widget.tabIconSelectedColor ??
+                                                  Colors.black,
+                                              BlendMode.srcIn,
+                                            ),
+                                            child: activeIconWidget!,
+                                          )
                                         : Icon(
                                             activeIcon,
                                             color: widget.tabIconSelectedColor,
@@ -311,32 +326,50 @@ class _MotionTabBarState extends State<MotionTabBar>
         label: tabLabel,
         labelAlwaysVisible: widget.labelAlwaysVisible,
         textStyle: widget.textStyle ?? TextStyle(color: Colors.black),
+        textSelectedStyle: widget.textSelectedStyle ??
+            widget.textStyle ??
+            TextStyle(color: Colors.black),
         tabIconWidget: iconWidgets?[tabLabel],
         tabIconData: icons?[tabLabel],
         tabIconColor: widget.tabIconColor ?? Colors.black,
         tabIconSize: widget.tabIconSize,
         badge: badge,
         callbackFunction: () {
-          setState(() {
-            activeIcon = icons?[tabLabel];
-            activeIconWidget = iconWidgets?[tabLabel];
-            selectedTab = tabLabel;
-            widget.onTabItemSelected!(index);
-          });
-          _initAnimationAndStart(_positionAnimation.value, position);
+          // setState(() {
+          //   activeIcon = icons?[tabLabel];
+          //   activeIconWidget = iconWidgets?[tabLabel];
+          //   selectedTab = tabLabel;
+          //   widget.onTabItemSelected!(index);
+          // });
+          // _initAnimationAndStart(_positionAnimation.value, position);
+
+          // เช็คก่อนว่าเป็นแท็บเดียวกันหรือไม่
+          if (selectedTab != tabLabel) {
+            setState(() {
+              activeIcon = icons?[tabLabel];
+              activeIconWidget = iconWidgets?[tabLabel];
+              selectedTab = tabLabel;
+            });
+            _initAnimationAndStart(_positionAnimation.value, position);
+          }
+
+          // เรียก callback หลังจากเช็คแล้ว (อยู่นอก setState)
+          widget.onTabItemSelected!(index);
         },
       );
     }).toList();
   }
 
   _initAnimationAndStart(double from, double to) {
-    _positionTween.begin = from;
-    _positionTween.end = to;
+    if (from != to) {
+      _positionTween.begin = from;
+      _positionTween.end = to;
 
-    _animationController.reset();
-    _fadeOutController.reset();
-    _animationController.forward();
-    _fadeOutController.forward();
+      _animationController.reset();
+      _fadeOutController.reset();
+      _animationController.forward();
+      _fadeOutController.forward();
+    }
   }
 }
 

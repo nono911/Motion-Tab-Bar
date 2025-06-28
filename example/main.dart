@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title!),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.white,
       ),
       bottomNavigationBar: MotionTabBar(
         controller:
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             child: const Text(
               '48',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 10,
                 color: Colors.white,
               ),
             ),
@@ -137,16 +137,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         tabSize: 50,
         tabBarHeight: 55,
         textStyle: const TextStyle(
-          fontSize: 12,
+          fontSize: 10,
           color: Colors.black,
           fontWeight: FontWeight.w500,
+        ),
+        textSelectedStyle: const TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
         ),
         // tabIconColor: Colors.blue[600],
         tabIconSize: 20.0,
         tabIconSelectedSize: 24.0,
-        tabSelectedColor: Colors.white,
+        tabSelectedColor: Colors.blue[100],
         tabIconSelectedColor: Colors.black,
-        tabBarColor: Colors.orange,
+        tabBarColor: Colors.white,
         onTabItemSelected: (int value) {
           setState(() {
             _motionTabBarController!.index = value;
